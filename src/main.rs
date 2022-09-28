@@ -224,25 +224,30 @@ impl Component for Model {
         // This gives us a component's "`Scope`" which allows us to send messages, etc to the component.
         let link = ctx.link();
         html! {
-            <div>
-                <button onclick={link.callback(|_| Msg::N1)}>{ "1" }</button>
-                <button onclick={link.callback(|_| Msg::N2)}>{ "2" }</button>
-                <button onclick={link.callback(|_| Msg::N3)}>{ "3" }</button>
-                <button onclick={link.callback(|_| Msg::N4)}>{ "4" }</button>
-                <button onclick={link.callback(|_| Msg::N5)}>{ "5" }</button>
-                <button onclick={link.callback(|_| Msg::N6)}>{ "6" }</button>
-                <button onclick={link.callback(|_| Msg::N7)}>{ "7" }</button>
-                <button onclick={link.callback(|_| Msg::N8)}>{ "8" }</button>
-                <button onclick={link.callback(|_| Msg::N9)}>{ "9" }</button>
-                <button onclick={link.callback(|_| Msg::N0)}>{ "0" }</button>
-                <button onclick={link.callback(|_| Msg::Clear)}>{ "C" }</button>
-                <button onclick={link.callback(|_| Msg::Add)}>{ "+" }</button>
-                <button onclick={link.callback(|_| Msg::Sub)}>{ "-" }</button>
-                <button onclick={link.callback(|_| Msg::Mul)}>{ "×" }</button>
-                <button onclick={link.callback(|_| Msg::Div)}>{ "÷" }</button>
-                <button onclick={link.callback(|_| Msg::Eq)}>{ "=" }</button>
-                <p>{ self.current }</p>
-                <p>{ self.value }</p>
+            <div id="app">
+                <div id="display">
+                    <p id="result">{ if self.current_initd {self.value} else {self.current} }</p>
+                </div>
+                <div id="input">
+                    <button class="normal util" onclick={link.callback(|_| Msg::Clear)}>{ "C" }</button>
+                    <button class="normal util" onclick={link.callback(|_| Msg::Clear)}>{ "C" }</button>
+                    <button class="normal util" onclick={link.callback(|_| Msg::Clear)}>{ "C" }</button>
+                    <button class="normal op" onclick={link.callback(|_| Msg::Div)}>{ "÷" }</button>
+                    <button class="normal number" onclick={link.callback(|_| Msg::N7)}>{ "7" }</button>
+                    <button class="normal number" onclick={link.callback(|_| Msg::N8)}>{ "8" }</button>
+                    <button class="normal number" onclick={link.callback(|_| Msg::N9)}>{ "9" }</button>
+                    <button class="normal op" onclick={link.callback(|_| Msg::Mul)}>{ "×" }</button>
+                    <button class="normal number" onclick={link.callback(|_| Msg::N4)}>{ "4" }</button>
+                    <button class="normal number" onclick={link.callback(|_| Msg::N5)}>{ "5" }</button>
+                    <button class="normal number" onclick={link.callback(|_| Msg::N6)}>{ "6" }</button>
+                    <button class="normal op" onclick={link.callback(|_| Msg::Sub)}>{ "-" }</button>
+                    <button class="normal number" onclick={link.callback(|_| Msg::N1)}>{ "1" }</button>
+                    <button class="normal number" onclick={link.callback(|_| Msg::N2)}>{ "2" }</button>
+                    <button class="normal number" onclick={link.callback(|_| Msg::N3)}>{ "3" }</button>
+                    <button class="normal op" onclick={link.callback(|_| Msg::Add)}>{ "+" }</button>
+                    <button class="wide number" onclick={link.callback(|_| Msg::N0)}>{ "0" }</button>
+                    <button class="normal op" onclick={link.callback(|_| Msg::Eq)}>{ "=" }</button>
+                </div>
             </div>
         }
     }

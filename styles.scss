@@ -1,0 +1,71 @@
+#app {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+
+  background-color: black;
+
+  font-family: sans-serif;
+}
+
+#display {
+  position: absolute;
+  bottom: 120vw;
+  right: 0;
+
+  margin: 2vw;
+
+  #result {
+    font-size: 20vw;
+    margin: 2vw;
+
+    color: white;
+  }
+}
+
+#input {
+  position: absolute;
+  bottom: 0;
+  margin: 2vw;
+}
+
+button.normal {
+  border: 0;
+  border-radius: 100vh;
+
+  margin: 2vw;
+
+  width: 20vw;
+  height: 20vw;
+
+  font-size: 10vw;
+  text-align: center;
+}
+
+button.wide {
+  border: 0;
+  border-radius: 100vh;
+
+  margin: 2vw;
+
+  width: 44vw;
+  height: 20vw;
+
+  font-size: 10vw;
+  text-align: center;
+}
+
+button.number {
+  color: #fff;
+  background-color: #333;
+}
+
+button.util {
+  color: #000;
+  background-color: #929288;
+}
+
+button.op {
+  color: #fff;
+  background-color: #e90;
+}

@@ -23,6 +23,7 @@ enum Msg {
 
 struct Model {
     value: f64,
+    current_initd: bool,
     current: f64,
     op:fn(&mut Self) -> f64,
 }
@@ -58,6 +59,7 @@ impl Component for Model {
     fn create(_ctx: &Context<Self>) -> Self {
         Self {
             value: 0.0,
+            current_initd: true,
             current: 0.0,
             op: Self::clear,
         }
@@ -66,119 +68,153 @@ impl Component for Model {
     fn update(&mut self, _ctx: &Context<Self>, msg: Self::Message) -> bool {
         match msg {
             Msg::N1 => {
-                if self.current == 0.0 {
+                if self.current_initd {
                     self.current = 1.0;
+                    self.current_initd = false;
                 } else{
                     self.current = self.current * 10.0 + 1.0;
                 }
                 true
             },
             Msg::N2 => {
-                if self.current == 0.0 {
+                if self.current_initd {
                     self.current = 2.0;
+                    self.current_initd = false;
+
                 } else{
                     self.current = self.current * 10.0 + 2.0;
                 }
                 true
             },
             Msg::N3 => {
-                if self.current == 0.0 {
+                if self.current_initd {
                     self.current = 3.0;
+                    self.current_initd = false;
+
                 } else{
                     self.current = self.current * 10.0 + 3.0;
                 }
                 true
             },
             Msg::N4 => {
-                if self.current == 0.0 {
+                if self.current_initd {
                     self.current = 4.0;
+                    self.current_initd = false;
+
                 } else{
                     self.current = self.current * 10.0 + 4.0;
                 }
                 true
             },
             Msg::N5 => {
-                if self.current == 0.0 {
+                if self.current_initd {
                     self.current = 5.0;
+                    self.current_initd = false;
+
                 } else{
                     self.current = self.current * 10.0 + 5.0;
                 }
                 true
             },
             Msg::N6 => {
-                if self.current == 0.0 {
+                if self.current_initd {
                     self.current = 6.0;
+                    self.current_initd = false;
+
                 } else{
                     self.current = self.current * 10.0 + 6.0;
                 }
                 true
             },
             Msg::N7 => {
-                if self.current == 0.0 {
+                if self.current_initd {
                     self.current = 7.0;
+                    self.current_initd = false;
+
                 } else{
                     self.current = self.current * 10.0 + 7.0;
                 }
                 true
             },
             Msg::N8 => {
-                if self.current == 0.0 {
+                if self.current_initd {
                     self.current = 8.0;
+                    self.current_initd = false;
+
                 } else{
                     self.current = self.current * 10.0 + 8.0;
                 }
                 true
             },
             Msg::N9 => {
-                if self.current == 0.0 {
+                if self.current_initd {
                     self.current = 9.0;
+                    self.current_initd = false;
+
                 } else{
                     self.current = self.current * 10.0 + 9.0;
                 }
                 true
             },
             Msg::N0 => {
-                if self.current == 0.0 {
+                if self.current_initd {
                     self.current = 0.0;
+                    self.current_initd = false;
+
                 } else{
                     self.current = self.current * 10.0 + 0.0;
                 }
                 true
             },
             Msg::Clear => {
-                self.value = (self.op)(self);
                 self.op = Self::clear;
                 self.current = 0.0;
+                self.current_initd = true;
                 true
             },
             Msg::Add => {
-                self.value = (self.op)(self);
+                if !self.current_initd {
+                    self.value = (self.op)(self);
+                }
                 self.op = Self::add;
                 self.current = 0.0;
+                self.current_initd = true;
                 true
             },
             Msg::Sub => {
-                self.value = (self.op)(self);
+                if !self.current_initd {
+                    self.value = (self.op)(self);
+                }
                 self.op = Self::sub;
                 self.current = 0.0;
+                self.current_initd = true;
                 true
             },
             Msg::Mul => {
-                self.value = (self.op)(self);
+                if !self.current_initd {
+                    self.value = (self.op)(self);
+                }
                 self.op = Self::mul;
                 self.current = 0.0;
+                self.current_initd = true;
                 true
             },
             Msg::Div => {
-                self.value = (self.op)(self);
+                if !self.current_initd {
+                    self.value = (self.op)(self);
+                }
                 self.op = Self::div;
                 self.current = 0.0;
+                self.current_initd = true;
                 true
             },
             Msg::Eq => {
-                self.value = (self.op)(self);
+                if !self.current_initd {
+                    self.value = (self.op)(self);
+                }
                 self.op = Self::eq;
                 self.current = 0.0;
+                self.current_initd = true;
                 true
             },
         }
@@ -207,14 +243,9 @@ impl Component for Model {
                 <button onclick={link.callback(|_| Msg::Eq)}>{ "=" }</button>
                 <p>{ self.current }</p>
                 <p>{ self.value }</p>
-                <p>{ type_of(self.op) }</p>
             </div>
         }
     }
-}
-
-fn type_of<T>(_: T) -> &'static str {
-    std::any::type_name::<T>()
 }
 
 fn main() {

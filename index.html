@@ -15,5 +15,16 @@
 
     <link data-trunk rel="copy-dir" href="images/" />
     <link rel="icon" href="images/icon_192.png" />
+
+    <script>
+      function handle(event) {
+        event.preventDefault();
+      }
+
+      window.onload = function () {
+        document.addEventListener("touchmove", handle, { passive: false });
+        document.addEventListener("mousewheel", handle, { passive: false });
+      };
+    </script>
   </head>
 </html>

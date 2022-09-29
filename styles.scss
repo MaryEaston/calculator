@@ -1,5 +1,5 @@
 // 正方形
-@media (min-aspect-ratio: 9/16) and (max-aspect-ratio: 16/9) {
+@media (min-aspect-ratio: 10/16) and (max-aspect-ratio: 16/10) {
   $display-bottom: 70vh;
   $display-margin: 2vw;
   $display-result-font-size: 12vh;
@@ -46,14 +46,68 @@
 
     font-size: $button-font-size;
   }
+
+  button.func {
+    display: none;
+  }
 }
 
 // 横長
-@media (min-aspect-ratio: 16/9) {
+@media (min-aspect-ratio: 16/10) {
+  $display-bottom: 70vh;
+  $display-margin: 2vw;
+  $display-result-font-size: 12vh;
+  $display-result-margin: 2vh;
+
+  $button-width: 8vw;
+  $button-height: 12vh;
+  $button-margin-vertical: 1vh;
+  $button-margin-horizontal: 0.9vw;
+
+  $button-font-size: 6vh;
+
+  #display {
+    bottom: $display-bottom;
+
+    margin: $display-margin;
+
+    #result {
+      font-size: $display-result-font-size;
+      margin: $display-result-margin;
+    }
+  }
+
+  button.normal {
+    width: $button-width;
+    height: $button-height;
+
+    margin-top: $button-margin-vertical;
+    margin-bottom: $button-margin-vertical;
+    margin-left: $button-margin-horizontal;
+    margin-right: $button-margin-horizontal;
+
+    font-size: $button-font-size;
+  }
+
+  button.wide {
+    width: calc($button-width * 2 + $button-margin-horizontal * 2);
+    height: $button-height;
+
+    margin-top: $button-margin-vertical;
+    margin-bottom: $button-margin-vertical;
+    margin-left: $button-margin-horizontal;
+    margin-right: $button-margin-horizontal;
+
+    font-size: $button-font-size;
+  }
+
+  button.func {
+    font-size: calc($button-font-size * 0.75);
+  }
 }
 
 // 縦長
-@media (max-aspect-ratio: 9/16) {
+@media (max-aspect-ratio: 10/16) {
   $display-bottom: 120vw;
   $display-margin: 2vw;
   $display-result-font-size: 20vw;
@@ -93,6 +147,10 @@
 
     font-size: $button-font-size;
   }
+
+  button.func {
+    display: none;
+  }
 }
 
 #app {
@@ -108,6 +166,8 @@
 #display {
   position: absolute;
   right: 0;
+
+  text-align: right;
 
   #result {
     color: white;
@@ -150,4 +210,14 @@ button.util {
 button.op {
   color: #fff;
   background-color: #e90;
+}
+
+button.func {
+  color: #fff;
+  background-color: #222;
+}
+
+p.debug {
+  font-size: 16px;
+  color: #666;
 }

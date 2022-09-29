@@ -1,5 +1,5 @@
 // 正方形
-@media (min-aspect-ratio: 13/17) and (max-aspect-ratio: 17/13) {
+@media (min-aspect-ratio: 9/16) and (max-aspect-ratio: 17/13) {
   $display-bottom: 70vh;
   $display-margin: 2vw;
   $display-result-font-size: 12vh;
@@ -107,7 +107,7 @@
 }
 
 // 縦長
-@media (max-aspect-ratio: 13/17) {
+@media (max-aspect-ratio: 9/16) {
   $display-bottom: 120vw;
   $display-margin: 2vw;
   $display-result-font-size: 20vw;

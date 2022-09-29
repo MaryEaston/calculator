@@ -1,0 +1,10 @@
+[build]
+target = "index.html"
+release = true
+dist = "docs"
+
+[watch]
+watch = []
+
+[port]
+port = 8000

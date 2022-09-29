@@ -3,7 +3,6 @@
     "short_name": "Cal+",
     "description": "計算機",
     "lang": "ja-JP",
-    "start_url": "/",
     "display": "standalone",
     "icons": [
         {

@@ -1,7 +1,7 @@
 [build]
 target = "index.html"
-release = true
-dist = "docs"
+release = false
+dist = "dist"
 
 [watch]
 watch = []

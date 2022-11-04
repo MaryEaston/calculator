@@ -387,7 +387,7 @@ impl Component for Model {
         html! {
             <div id="app">
                 <div id="display">
-                    <p class="debug">{"value="} {self.value} {" | current="} {self.current}</p>
+                    <p class="debug">{"hello value="} {self.value} {" | current="} {self.current}</p>
                     <p id="result">{ if self.current_initd {self.value} else {self.current} }</p>
                 </div>
                 <div id="input">

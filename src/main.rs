@@ -3,59 +3,29 @@ use rand::Rng;
 
 use yew::prelude::*;
 
-// #[wasm_bindgen]
-// pub fn rand() -> f64{
-//     Math.random()
-// }
-
 enum Msg {
-    N1,
-    N2,
-    N3,
-    N4,
-    N5,
-    N6,
-    N7,
-    N8,
-    N9,
-    N0,
+    N1,N2,N3,N4,N5,N6,N7,N8,N9,N0,
 
     Clear,
 
     // 定数
-    E,
-    Pi,
-    Rand,
+    E,Pi,Rand,
+
+    // 状態
+    Point,Second,
 
     // 単項演算子
-    Neg,
-    Pct,
-    Square,
-    Cubic,
-    Exp,
-    Exp10,
-    Rec,
-    Sqrt,
-    Root3,
-    Ln,
-    Log10,
-    Sin,
-    Cos,
-    Tan,
-    Sinh,
-    Cosh,
-    Tanh,
+    Neg,Pct,Square,Cubic,Exp,Exp10,Rec,Sqrt,Root3,Ln,Log10,Sin,Cos,Tan,Sinh,Cosh,Tanh,
 
     // 二項演算子
-    Add,
-    Sub,
-    Mul,
-    Div,
-    Pow,
-    Root,
-    EE,
+    Add,Sub,Mul,Div,Pow,Root,EE,
 
     Eq,
+}
+
+enum State {
+    Point,
+    Second,
 }
 
 struct Model {
@@ -63,15 +33,24 @@ struct Model {
     current_initd: bool,
     current: f64,
     op:fn(&mut Self) -> f64,
+    state: Vec<State>,
 }
 
 impl Model{
     fn number(&mut self,num: i64){
         if self.current_initd {
-            self.current = num as f64;
+            if self.state.iter().any(|e| match e {State::Point => true, _ => false}) {
+                self.current = num as f64 / 10.0;
+            }else{
+                self.current = num as f64;
+            }
             self.current_initd = false;
         } else{
-            self.current = self.current * 10.0 + num as f64;
+            if self.state.iter().any(|e| match e {State::Point => true, _ => false}) {
+                self.current = (self.current * 10.0 + num as f64) / 10.0;
+            }else{
+                self.current = self.current * 10.0 + num as f64;
+            }
         }
     }
 
@@ -196,6 +175,7 @@ impl Component for Model {
             current_initd: true,
             current: 0.0,
             op: Self::clear,
+            state: vec![],
         }
     }
 
@@ -266,6 +246,16 @@ impl Component for Model {
             Msg::Rand => {
                 let mut rng = rand::thread_rng();
                 self.constant(rng.gen());
+                true
+            }
+
+            // 状態
+            Msg::Point => {
+                self.state.push(State::Point);
+                true
+            }
+            Msg::Second => {
+                self.state.push(State::Second);
                 true
             }
 
@@ -390,7 +380,7 @@ impl Component for Model {
                     <p class="debug">{"hello value="} {self.value} {" | current="} {self.current}</p>
                     <p id="result">{ if self.current_initd {self.value} else {self.current} }</p>
                 </div>
-                <div id="input">
+                <div id="function">
                     <button class="normal func" onclick={link.callback(|_| Msg::Clear)}>{ "(" }</button>
                     <button class="normal func" onclick={link.callback(|_| Msg::Clear)}>{ ")" }</button>
                     <button class="normal func" onclick={link.callback(|_| Msg::Clear)}>{ "mc" }</button>
@@ -398,34 +388,19 @@ impl Component for Model {
                     <button class="normal func" onclick={link.callback(|_| Msg::Clear)}>{ "m-" }</button>
                     <button class="normal func" onclick={link.callback(|_| Msg::Clear)}>{ "mr" }</button>
 
-                    <button class="normal util" onclick={link.callback(|_| Msg::Clear)}>{ "C" }</button>
-                    <button class="normal util" onclick={link.callback(|_| Msg::Neg)}>{ "±" }</button>
-                    <button class="normal util" onclick={link.callback(|_| Msg::Pct)}>{ "%" }</button>
-                    <button class="normal op" onclick={link.callback(|_| Msg::Div)}>{ "÷" }</button>
-
-                    <button class="normal func" onclick={link.callback(|_| Msg::Clear)}>{ "2^nd" }</button>
-                    <button class="normal func" onclick={link.callback(|_| Msg::Square)}>{ "x^2" }</button>
-                    <button class="normal func" onclick={link.callback(|_| Msg::Cubic)}>{ "x^3" }</button>
-                    <button class="normal func" onclick={link.callback(|_| Msg::Pow)}>{ "x^y" }</button>
-                    <button class="normal func" onclick={link.callback(|_| Msg::Exp)}>{ "e^x" }</button>
-                    <button class="normal func" onclick={link.callback(|_| Msg::Exp10)}>{ "10^x" }</button>
-
-                    <button class="normal number" onclick={link.callback(|_| Msg::N7)}>{ "7" }</button>
-                    <button class="normal number" onclick={link.callback(|_| Msg::N8)}>{ "8" }</button>
-                    <button class="normal number" onclick={link.callback(|_| Msg::N9)}>{ "9" }</button>
-                    <button class="normal op" onclick={link.callback(|_| Msg::Mul)}>{ "×" }</button>
+                    <button class="normal func" onclick={link.callback(|_| Msg::Clear)}>{ "2" } <sup>{"nd"}</sup></button>
+                    <button class="normal func" onclick={link.callback(|_| Msg::Square)}>{ "x" }<sup>{"2"}</sup></button>
+                    <button class="normal func" onclick={link.callback(|_| Msg::Cubic)}>{ "x" }<sup>{"3"}</sup></button>
+                    <button class="normal func" onclick={link.callback(|_| Msg::Pow)}>{ "x" }<sup>{"y"}</sup></button>
+                    <button class="normal func" onclick={link.callback(|_| Msg::Exp)}>{ "e" }<sup>{"x"}</sup></button>
+                    <button class="normal func" onclick={link.callback(|_| Msg::Exp10)}>{ "10" }<sup>{"x"}</sup></button>
 
                     <button class="normal func" onclick={link.callback(|_| Msg::Rec)}>{ "1/x" }</button>
                     <button class="normal func" onclick={link.callback(|_| Msg::Sqrt)}>{ "√x" }</button>
-                    <button class="normal func" onclick={link.callback(|_| Msg::Root3)}>{ "3√x" }</button>
-                    <button class="normal func" onclick={link.callback(|_| Msg::Root)}>{ "y√x" }</button>
+                    <button class="normal func" onclick={link.callback(|_| Msg::Root3)}><sup>{"3"}</sup>{ "√x" }</button>
+                    <button class="normal func" onclick={link.callback(|_| Msg::Root)}><sup>{"y"}</sup>{ "√x" }</button>
                     <button class="normal func" onclick={link.callback(|_| Msg::Ln)}>{ "ln" }</button>
-                    <button class="normal func" onclick={link.callback(|_| Msg::Log10)}>{ "log10" }</button>
-
-                    <button class="normal number" onclick={link.callback(|_| Msg::N4)}>{ "4" }</button>
-                    <button class="normal number" onclick={link.callback(|_| Msg::N5)}>{ "5" }</button>
-                    <button class="normal number" onclick={link.callback(|_| Msg::N6)}>{ "6" }</button>
-                    <button class="normal op" onclick={link.callback(|_| Msg::Sub)}>{ "-" }</button>
+                    <button class="normal func" onclick={link.callback(|_| Msg::Log10)}>{ "log" }<sub>{"10"}</sub></button>
 
                     <button class="normal func" onclick={link.callback(|_| Msg::Clear)}>{ "x!" }</button>
                     <button class="normal func" onclick={link.callback(|_| Msg::Sin)}>{ "sin" }</button>
@@ -434,19 +409,36 @@ impl Component for Model {
                     <button class="normal func" onclick={link.callback(|_| Msg::E)}>{ "e" }</button>
                     <button class="normal func" onclick={link.callback(|_| Msg::EE)}>{ "EE" }</button>
 
-                    <button class="normal number" onclick={link.callback(|_| Msg::N1)}>{ "1" }</button>
-                    <button class="normal number" onclick={link.callback(|_| Msg::N2)}>{ "2" }</button>
-                    <button class="normal number" onclick={link.callback(|_| Msg::N3)}>{ "3" }</button>
-                    <button class="normal op" onclick={link.callback(|_| Msg::Add)}>{ "+" }</button>
-
                     <button class="normal func" onclick={link.callback(|_| Msg::Clear)}>{ "Rad" }</button>
                     <button class="normal func" onclick={link.callback(|_| Msg::Sinh)}>{ "sinh" }</button>
                     <button class="normal func" onclick={link.callback(|_| Msg::Cosh)}>{ "cosh" }</button>
                     <button class="normal func" onclick={link.callback(|_| Msg::Tanh)}>{ "tanh" }</button>
                     <button class="normal func" onclick={link.callback(|_| Msg::Pi)}>{ "π" }</button>
                     <button class="normal func" onclick={link.callback(|_| Msg::Rand)}>{ "Rand" }</button>
+                </div>
+                <div id="input">
+                    <button class="normal util" onclick={link.callback(|_| Msg::Clear)}>{ "C" }</button>
+                    <button class="normal util" onclick={link.callback(|_| Msg::Neg)}>{ "±" }</button>
+                    <button class="normal util" onclick={link.callback(|_| Msg::Pct)}>{ "%" }</button>
+                    <button class="normal op" onclick={link.callback(|_| Msg::Div)}>{ "÷" }</button>
+
+                    <button class="normal number" onclick={link.callback(|_| Msg::N7)}>{ "7" }</button>
+                    <button class="normal number" onclick={link.callback(|_| Msg::N8)}>{ "8" }</button>
+                    <button class="normal number" onclick={link.callback(|_| Msg::N9)}>{ "9" }</button>
+                    <button class="normal op" onclick={link.callback(|_| Msg::Mul)}>{ "×" }</button>
+
+                    <button class="normal number" onclick={link.callback(|_| Msg::N4)}>{ "4" }</button>
+                    <button class="normal number" onclick={link.callback(|_| Msg::N5)}>{ "5" }</button>
+                    <button class="normal number" onclick={link.callback(|_| Msg::N6)}>{ "6" }</button>
+                    <button class="normal op" onclick={link.callback(|_| Msg::Sub)}>{ "-" }</button>
+
+                    <button class="normal number" onclick={link.callback(|_| Msg::N1)}>{ "1" }</button>
+                    <button class="normal number" onclick={link.callback(|_| Msg::N2)}>{ "2" }</button>
+                    <button class="normal number" onclick={link.callback(|_| Msg::N3)}>{ "3" }</button>
+                    <button class="normal op" onclick={link.callback(|_| Msg::Add)}>{ "+" }</button>
 
                     <button class="wide number" onclick={link.callback(|_| Msg::N0)}>{ "0" }</button>
+                    <button class="normal number" onclick={link.callback(|_| Msg::Point)}>{ "." }</button>
                     <button class="normal op" onclick={link.callback(|_| Msg::Eq)}>{ "=" }</button>
                 </div>
             </div>

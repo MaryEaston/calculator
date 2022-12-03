@@ -28,34 +28,55 @@ enum State {
     Second,
 }
 
+struct Number{
+    value: String,
+}
+
+impl Number{
+    fn input_number(&mut self,number: &str){
+        self.value += number;
+    }
+}
+
 struct Model {
     value: f64,
     current_initd: bool,
-    current: f64,
+    current: String,
     op:fn(&mut Self) -> f64,
-    state: Vec<State>,
+    point: bool,
+    second: bool,
 }
 
 impl Model{
-    fn number(&mut self,num: i64){
+    fn number(&mut self,num: &str){
         if self.current_initd {
-            if self.state.iter().any(|e| match e {State::Point => true, _ => false}) {
-                self.current = num as f64 / 10.0;
+            if self.point {
+                // self.current = num as f64 / 10.0;
+                self.current = String::from("0.") + num;
             }else{
-                self.current = num as f64;
+                // self.current = num as f64;
+                self.current = String::from(num);
             }
             self.current_initd = false;
         } else{
-            if self.state.iter().any(|e| match e {State::Point => true, _ => false}) {
-                self.current = (self.current * 10.0 + num as f64) / 10.0;
-            }else{
-                self.current = self.current * 10.0 + num as f64;
-            }
+            self.current = self.current.clone() + num;
         }
     }
 
-    fn constant(&mut self,num: f64){
-        self.current = num;
+    fn point(&mut self){
+        if !self.point {
+            self.current = self.current.clone() + ".";
+        }
+        self.point = true;
+    }
+
+    fn number_init(&mut self){
+        self.point = false;
+        self.current_initd = true;
+    }
+
+    fn constant(&mut self,num: &str){
+        self.current = String::from(num);
         if self.current_initd {
             self.current_initd = false;
         }
@@ -65,9 +86,9 @@ impl Model{
         if self.current_initd{
             self.value = op(self.value);
         }else{
-            self.value = op(self.current);
+            self.value = op(self.current.parse::<f64>().unwrap());
         }
-        self.current = 0.0;
+        self.current = String::from("0.0");
         self.current_initd = true;
     }
     fn neg(x: f64) -> f64{
@@ -131,34 +152,34 @@ impl Model{
             self.value = (self.op)(self);
         }
         self.op = op;
-        self.current = 0.0;
-        self.current_initd = true;
+        self.current = String::from("0");
+        self.number_init()
     }
     fn add(&mut self) -> f64{
-        self.value + self.current
+        self.value + self.current.parse::<f64>().unwrap()
     }
     fn sub(&mut self) -> f64{
-        self.value - self.current
+        self.value - self.current.parse::<f64>().unwrap()
     }
     fn mul(&mut self) -> f64{
-        self.value * self.current
+        self.value * self.current.parse::<f64>().unwrap()
     }
     fn div(&mut self) -> f64{
-        self.value / self.current
+        self.value / self.current.parse::<f64>().unwrap()
     }
     fn pow(&mut self) -> f64{
-        self.value.powf(self.current)
+        self.value.powf(self.current.parse::<f64>().unwrap())
     }
     fn root(&mut self) -> f64{
-        self.value.powf(1.0 / self.current)
+        self.value.powf(1.0 / self.current.parse::<f64>().unwrap())
     }
     fn ee(&mut self) -> f64{
         let ten = 10.0;
-        self.value * ten.powf(self.current)
+        self.value * ten.powf(self.current.parse::<f64>().unwrap())
     }
 
     fn clear(&mut self) -> f64{
-        self.current
+        self.current.parse::<f64>().unwrap()
     }
     fn eq(&mut self) -> f64{
         self.value
@@ -173,52 +194,53 @@ impl Component for Model {
         Self {
             value: 0.0,
             current_initd: true,
-            current: 0.0,
+            current: String::from("0"),
             op: Self::clear,
-            state: vec![],
+            point: false,
+            second: false,
         }
     }
 
     fn update(&mut self, _ctx: &Context<Self>, msg: Self::Message) -> bool {
         match msg {
             Msg::N1 => {
-                self.number(1);
+                self.number("1");
                 true
             },
             Msg::N2 => {
-                self.number(2);
+                self.number("2");
                 true
             },
             Msg::N3 => {
-                self.number(3);
+                self.number("3");
                 true
             },
             Msg::N4 => {
-                self.number(4);
+                self.number("4");
                 true
             },
             Msg::N5 => {
-                self.number(5);
+                self.number("5");
                 true
             },
             Msg::N6 => {
-                self.number(6);
+                self.number("6");
                 true
             },
             Msg::N7 => {
-                self.number(7);
+                self.number("7");
                 true
             },
             Msg::N8 => {
-                self.number(8);
+                self.number("8");
                 true
             },
             Msg::N9 => {
-                self.number(9);
+                self.number("9");
                 true
             },
             Msg::N0 => {
-                self.number(0);
+                self.number("0");
                 true
             },
 
@@ -228,34 +250,35 @@ impl Component for Model {
                     self.value = 0.0;
                 }else{
                     self.op = Self::clear;
-                    self.current = 0.0;
-                    self.current_initd = true;
+                    self.current = String::from("0");
+                    self.number_init();
                 }
                 true
             },
 
             // 定数
             Msg::E => {
-                self.constant(2.718281828459045);
+                self.constant("2.718281828459045");
                 true
             }
             Msg::Pi => {
-                self.constant(3.141592653589793);
+                self.constant("3.141592653589793");
                 true
             }
             Msg::Rand => {
                 let mut rng = rand::thread_rng();
-                self.constant(rng.gen());
+                let rand_value = rng.gen::<f64>();
+                self.constant(&rand_value.to_string());
                 true
             }
 
             // 状態
             Msg::Point => {
-                self.state.push(State::Point);
+                self.point();
                 true
             }
             Msg::Second => {
-                self.state.push(State::Second);
+                self.second = !self.second;
                 true
             }
 
@@ -364,8 +387,8 @@ impl Component for Model {
                     self.value = (self.op)(self);
                 }
                 self.op = Self::eq;
-                self.current = 0.0;
-                self.current_initd = true;
+                self.current = String::from("0");
+                self.number_init();
                 true
             },
         }
@@ -377,8 +400,8 @@ impl Component for Model {
         html! {
             <div id="app">
                 <div id="display">
-                    <p class="debug">{"hello value="} {self.value} {" | current="} {self.current}</p>
-                    <p id="result">{ if self.current_initd {self.value} else {self.current} }</p>
+                    <p class="debug">{"hello value="} {self.value} {" | current="} {self.current.as_str()}</p>
+                    <p id="result">{ if self.current_initd {self.value} else {self.current.parse().unwrap()} }</p>
                 </div>
                 <div id="function">
                     <button class="normal func" onclick={link.callback(|_| Msg::Clear)}>{ "(" }</button>
